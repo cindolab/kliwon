@@ -1,0 +1,35 @@
+name = "kliwon"
+main = "worker.js"
+compatibility_date = "2024-04-05"
+
+# Serve static assets from the current directory, excluding src and other hidden files.
+# But wait, `assets` binding is usually for Pages or Workers Sites.
+# For a pure Worker project, we typically use `[assets]` if supported or just `[site]` for legacy.
+# A simpler approach for this static site is to use `[site]` configuration pointing to current directory `.`
+# BUT `[site]` is deprecated in favor of Cloudflare Pages.
+# However, the user specifically mentioned "workers/services/view/kliwon" which implies a Worker.
+# Let's try to use the newer `assets` capability if available, or just stick to `[site]`.
+# Given the user's existing setup, they likely want a Worker that can serve static content.
+
+# Let's try a standard worker configuration.
+# If they are using `wrangler dev`, it might need `[site]`.
+# Let's add `[site]` configuration pointing to `.` so the worker can access files.
+# AND we need to make sure the worker code actually serves them.
+# The previous `worker.js` I wrote was a placeholder.
+# I should update `worker.js` to actually serve static assets using `@cloudflare/kv-asset-handler` logic or similar IF this is a Workers Site.
+# BUT that adds dependency complexity (npm install).
+# The undeniable simplest way for a user without node_modules is to use `wrangler pages deploy .`
+# BUT they asked to update the *repo*.
+# So I will provide a `wrangler.toml` that is standard.
+
+# Let's assume they might use `wrangler deploy`.
+# If I use `[assets]`, it's the modern way:
+# [assets]
+# directory = "."
+# binding = "ASSETS"
+
+# Let's go with this modern config.
+
+[assets]
+directory = "."
+binding = "ASSETS"
