@@ -143,7 +143,7 @@ async function loadHoldersData() {
 async function fetchRealHolders() {
     try {
         // PolygonScan API - Get free API key from https://polygonscan.com/apis
-        const API_KEY = 'YourApiKeyToken'; // Replace with your API key
+        const API_KEY = 'H6V437H7N1GKDGHJRDMFUA2MS3I69YXW8K';
         const url = `https://api.polygonscan.com/api?module=token&action=tokenholderlist&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=100&apikey=${API_KEY}`;
 
         const response = await fetch(url);
