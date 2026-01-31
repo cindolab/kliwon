@@ -402,20 +402,36 @@ async function connectWallet() {
         const btn = document.getElementById('connectWallet');
 
         if (avatarUrl) {
-            // Show avatar + name
+            // Show avatar + name with premium styling
             btn.innerHTML = `
-                <img src="${avatarUrl}" alt="Avatar" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'">
-                <span class="btn-text">${displayName}</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="${avatarUrl}" 
+                         alt="Avatar" 
+                         style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.2);" 
+                         onerror="this.style.display='none'">
+                    <span class="btn-text" style="font-weight: 600;">${displayName}</span>
+                </div>
             `;
         } else {
-            // Show checkmark + name
+            // Show wallet icon + name with premium styling
             btn.innerHTML = `
-                <span class="btn-icon">✓</span>
-                <span class="btn-text">${displayName}</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.2);">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <span class="btn-text" style="font-weight: 600;">${displayName}</span>
+                </div>
             `;
         }
 
-        btn.style.background = 'linear-gradient(135deg, var(--green-primary) 0%, #059669 100%)';
+        btn.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
+        btn.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+        btn.style.boxShadow = '0 4px 16px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
+        btn.style.padding = '10px 20px';
 
         // Load user's balance
         const balance = await contract.balanceOf(account);
