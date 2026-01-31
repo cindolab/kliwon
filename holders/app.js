@@ -1,5 +1,6 @@
 // KLW Token Holders Dashboard - Main JavaScript
-// Simplified version without API Pro requirement
+// Version: 2.0 - Simplified (Mock Data Only)
+// Last Updated: 2026-01-31
 
 const CONTRACT_ADDRESS = '0xd4a3F69399eA250AaA4Ee62Ec5271002E51EeCd8';
 const POLYGON_RPC = 'https://polygon-rpc.com';
@@ -35,6 +36,7 @@ async function init() {
         setupEventListeners();
 
         console.log('Dashboard initialized successfully');
+        console.log('📌 Dashboard Version: 2.0 (Mock Data)');
         console.log('ℹ️ Note: Holder data is simulated. For real data visit:');
         console.log('🔗 https://polygonscan.com/token/' + CONTRACT_ADDRESS + '#balances');
     } catch (error) {
