@@ -142,9 +142,9 @@ async function loadHoldersData() {
 // Fetch real holders from PolygonScan API
 async function fetchRealHolders() {
     try {
-        // PolygonScan API - Get free API key from https://polygonscan.com/apis
+        // Etherscan API V2 - supports Polygon via chainid=137
         const API_KEY = 'H6V437H7N1GKDGHJRDMFUA2MS3I69YXW8K';
-        const url = `https://api.polygonscan.com/api?module=token&action=tokenholderlist&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=100&apikey=${API_KEY}`;
+        const url = `https://api.etherscan.io/v2/api?chainid=137&module=token&action=tokenholderlist&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=100&apikey=${API_KEY}`;
 
         const response = await fetch(url);
         const data = await response.json();
