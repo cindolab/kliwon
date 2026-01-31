@@ -370,12 +370,51 @@ async function connectWallet() {
             }
         }
 
-        // Update UI
+        // Fetch ENS name and avatar
+        let displayName = truncateAddress(account);
+        let avatarUrl = null;
+
+        try {
+            // Use Ethereum mainnet provider for ENS
+            const mainnetProvider = new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com');
+
+            // Lookup ENS name
+            const ensName = await mainnetProvider.lookupAddress(account);
+
+            if (ensName) {
+                displayName = ensName;
+
+                // Try to get ENS avatar
+                try {
+                    const resolver = await mainnetProvider.getResolver(ensName);
+                    if (resolver) {
+                        avatarUrl = await resolver.getAvatar();
+                    }
+                } catch (avatarError) {
+                    console.log('No ENS avatar found:', avatarError);
+                }
+            }
+        } catch (ensError) {
+            console.log('ENS lookup failed, using address:', ensError);
+        }
+
+        // Update UI with ENS or address
         const btn = document.getElementById('connectWallet');
-        btn.innerHTML = `
-            <span class="btn-icon">✓</span>
-            <span class="btn-text">${truncateAddress(account)}</span>
-        `;
+
+        if (avatarUrl) {
+            // Show avatar + name
+            btn.innerHTML = `
+                <img src="${avatarUrl}" alt="Avatar" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'">
+                <span class="btn-text">${displayName}</span>
+            `;
+        } else {
+            // Show checkmark + name
+            btn.innerHTML = `
+                <span class="btn-icon">✓</span>
+                <span class="btn-text">${displayName}</span>
+            `;
+        }
+
         btn.style.background = 'linear-gradient(135deg, var(--green-primary) 0%, #059669 100%)';
 
         // Load user's balance
@@ -383,12 +422,72 @@ async function connectWallet() {
         const decimals = await contract.decimals();
         const formattedBalance = ethers.utils.formatUnits(balance, decimals);
 
+        console.log('Connected:', displayName);
         console.log('Your KLW balance:', formattedBalance);
+
+        // Show balance in a toast or update UI
+        showBalanceNotification(formattedBalance);
 
     } catch (error) {
         console.error('Error connecting wallet:', error);
         alert('Failed to connect wallet. Please try again.');
     }
+}
+
+// Show balance notification
+function showBalanceNotification(balance) {
+    // Create a simple notification
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 24px;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: var(--shadow-lg);
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+    `;
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, var(--purple-primary), var(--gold-primary)); display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <div>
+                <div style="font-weight: 600; margin-bottom: 4px;">Wallet Connected</div>
+                <div style="font-size: 13px; color: var(--text-secondary);">Balance: ${formatNumber(balance)} KLW</div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Add animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Remove after 5 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
 }
 
 // Copy address to clipboard
