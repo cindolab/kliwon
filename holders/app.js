@@ -1,9 +1,8 @@
 // KLW Token Holders Dashboard - Main JavaScript
+// Wallet connection handled by wallet-provider.js
 
 const CONTRACT_ADDRESS = '0xd4a3F69399eA250AaA4Ee62Ec5271002E51EeCd8';
 const POLYGON_RPC = 'https://polygon-rpc.com';
-const POLYGONSCAN_API = 'https://api.polygonscan.com/api';
-const POLYGONSCAN_API_KEY = 'YourApiKeyToken'; // Replace with actual API key
 
 // ERC20 ABI (minimal for our needs)
 const ERC20_ABI = [
@@ -44,7 +43,6 @@ async function init() {
 
 // Setup event listeners
 function setupEventListeners() {
-    document.getElementById('connectWallet')?.addEventListener('click', connectWallet);
     document.getElementById('prevPage')?.addEventListener('click', () => changePage(-1));
     document.getElementById('nextPage')?.addEventListener('click', () => changePage(1));
 
@@ -75,7 +73,7 @@ async function loadTokenStats() {
         // Update UI
         document.getElementById('totalSupply').textContent = formatNumber(formattedSupply);
 
-        // Fetch additional stats from PolygonScan API
+        // Fetch additional stats
         await fetchPolygonScanStats();
 
     } catch (error) {
@@ -87,10 +85,7 @@ async function loadTokenStats() {
 // Fetch stats from PolygonScan API
 async function fetchPolygonScanStats() {
     try {
-        // Note: This is a placeholder. You'll need a valid PolygonScan API key
-        // and the actual endpoints may vary
-
-        // For demonstration, using mock data
+        // Using mock data for now
         const mockData = {
             totalHolders: 1247,
             transactions24h: 342,
@@ -112,22 +107,18 @@ async function fetchPolygonScanStats() {
 // Load holders data
 async function loadHoldersData() {
     try {
-        // In a real implementation, you would fetch this from an indexer or API
-        // For now, using mock data
         const mockHolders = generateMockHolders(100);
-
         displayHolders(mockHolders);
-
     } catch (error) {
         console.error('Error loading holders:', error);
         showError('Failed to load holders data');
     }
 }
 
-// Generate mock holders data (replace with real API call)
+// Generate mock holders data
 function generateMockHolders(count) {
     const holders = [];
-    let remainingSupply = 1000000; // Total supply
+    let remainingSupply = 1000000;
 
     for (let i = 0; i < count; i++) {
         const balance = remainingSupply * (Math.random() * 0.1 + 0.01) / (count - i);
@@ -166,8 +157,8 @@ function displayHolders(holders) {
             <td><strong>${formatNumber(holder.balance.toFixed(2))} KLW</strong></td>
             <td>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="flex: 1; height: 6px; background: var(--bg-tertiary); border-radius: 3px; overflow: hidden;">
-                        <div style="height: 100%; background: linear-gradient(90deg, var(--purple-primary), var(--gold-primary)); width: ${holder.percentage}%;"></div>
+                    <div style="flex: 1; height: 6px; background: var(--bg-card); border-radius: 3px; overflow: hidden;">
+                        <div style="height: 100%; background: var(--gradient-blue); width: ${holder.percentage}%;"></div>
                     </div>
                     <span>${holder.percentage.toFixed(2)}%</span>
                 </div>
@@ -175,7 +166,7 @@ function displayHolders(holders) {
             <td>${formatNumber(holder.transactions)}</td>
             <td>
                 <a href="https://polygonscan.com/address/${holder.address}" target="_blank" 
-                   style="color: var(--purple-light); text-decoration: none; font-weight: 500;">
+                   style="color: var(--primary-blue); text-decoration: none; font-weight: 500;">
                     View →
                 </a>
             </td>
@@ -204,7 +195,6 @@ async function loadRecentTransactions() {
         const transactionsList = document.getElementById('transactionsList');
         if (!transactionsList) return;
 
-        // Mock transactions (replace with real API call)
         const mockTransactions = generateMockTransactions(10);
 
         transactionsList.innerHTML = '';
@@ -215,7 +205,7 @@ async function loadRecentTransactions() {
             item.innerHTML = `
                 <div style="flex: 1;">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                        <div style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, var(--purple-primary), var(--gold-primary)); display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: var(--gradient-blue); display: flex; align-items: center; justify-content: center;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
@@ -225,18 +215,18 @@ async function loadRecentTransactions() {
                             <div style="font-weight: 600; margin-bottom: 4px;">
                                 Transfer ${formatNumber(tx.amount)} KLW
                             </div>
-                            <div style="font-size: 13px; color: var(--text-secondary);">
+                            <div style="font-size: 13px; color: var(--text-gray);">
                                 From ${truncateAddress(tx.from)} → To ${truncateAddress(tx.to)}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">
+                    <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 4px;">
                         ${tx.timeAgo}
                     </div>
                     <a href="https://polygonscan.com/tx/${tx.hash}" target="_blank" 
-                       style="color: var(--purple-light); text-decoration: none; font-size: 13px; font-weight: 500;">
+                       style="color: var(--primary-blue); text-decoration: none; font-size: 13px; font-weight: 500;">
                         View TX →
                     </a>
                 </div>
@@ -275,7 +265,6 @@ function updateDistributionChart() {
     const ctx = document.getElementById('distributionChart');
     if (!ctx) return;
 
-    // Mock distribution data
     const top10 = 45.5;
     const top50 = 32.3;
     const others = 22.2;
@@ -291,13 +280,13 @@ function updateDistributionChart() {
             datasets: [{
                 data: [top10, top50, others],
                 backgroundColor: [
-                    'rgba(147, 51, 234, 0.8)',
-                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(0, 82, 255, 0.8)',
+                    'rgba(0, 51, 204, 0.8)',
                     'rgba(59, 130, 246, 0.8)'
                 ],
                 borderColor: [
-                    'rgba(147, 51, 234, 1)',
-                    'rgba(245, 158, 11, 1)',
+                    'rgba(0, 82, 255, 1)',
+                    'rgba(0, 51, 204, 1)',
                     'rgba(59, 130, 246, 1)'
                 ],
                 borderWidth: 2
@@ -311,10 +300,10 @@ function updateDistributionChart() {
                     display: false
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(26, 26, 36, 0.95)',
+                    backgroundColor: 'rgba(15, 15, 18, 0.95)',
                     titleColor: '#FFFFFF',
-                    bodyColor: '#A1A1AA',
-                    borderColor: 'rgba(147, 51, 234, 0.3)',
+                    bodyColor: '#B0B0B0',
+                    borderColor: 'rgba(0, 82, 255, 0.3)',
                     borderWidth: 1,
                     padding: 12,
                     displayColors: true,
@@ -330,182 +319,6 @@ function updateDistributionChart() {
     });
 }
 
-// Connect wallet
-async function connectWallet() {
-    try {
-        if (typeof window.ethereum === 'undefined') {
-            alert('Please install MetaMask or another Web3 wallet to connect.');
-            return;
-        }
-
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const account = accounts[0];
-
-        // Check if on Polygon network
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        if (chainId !== '0x89') { // Polygon Mainnet
-            try {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0x89' }],
-                });
-            } catch (switchError) {
-                // Chain not added, add it
-                if (switchError.code === 4902) {
-                    await window.ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [{
-                            chainId: '0x89',
-                            chainName: 'Polygon Mainnet',
-                            nativeCurrency: {
-                                name: 'MATIC',
-                                symbol: 'MATIC',
-                                decimals: 18
-                            },
-                            rpcUrls: ['https://polygon-rpc.com'],
-                            blockExplorerUrls: ['https://polygonscan.com']
-                        }]
-                    });
-                }
-            }
-        }
-
-        // Fetch ENS name and avatar
-        let displayName = truncateAddress(account);
-        let avatarUrl = null;
-
-        try {
-            // Use Ethereum mainnet provider for ENS
-            const mainnetProvider = new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com');
-
-            // Lookup ENS name
-            const ensName = await mainnetProvider.lookupAddress(account);
-
-            if (ensName) {
-                displayName = ensName;
-
-                // Try to get ENS avatar
-                try {
-                    const resolver = await mainnetProvider.getResolver(ensName);
-                    if (resolver) {
-                        avatarUrl = await resolver.getAvatar();
-                    }
-                } catch (avatarError) {
-                    console.log('No ENS avatar found:', avatarError);
-                }
-            }
-        } catch (ensError) {
-            console.log('ENS lookup failed, using address:', ensError);
-        }
-
-        // Update UI with ENS or address
-        const btn = document.getElementById('connectWallet');
-
-        if (avatarUrl) {
-            // Show avatar + name with premium styling
-            btn.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <img src="${avatarUrl}" 
-                         alt="Avatar" 
-                         style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.2);" 
-                         onerror="this.style.display='none'">
-                    <span class="btn-text" style="font-weight: 600;">${displayName}</span>
-                </div>
-            `;
-        } else {
-            // Show wallet icon + name with premium styling
-            btn.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.2);">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
-                    </div>
-                    <span class="btn-text" style="font-weight: 600;">${displayName}</span>
-                </div>
-            `;
-        }
-
-        btn.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
-        btn.style.border = '1px solid rgba(255, 255, 255, 0.1)';
-        btn.style.boxShadow = '0 4px 16px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
-        btn.style.padding = '10px 20px';
-
-        // Load user's balance
-        const balance = await contract.balanceOf(account);
-        const decimals = await contract.decimals();
-        const formattedBalance = ethers.utils.formatUnits(balance, decimals);
-
-        console.log('Connected:', displayName);
-        console.log('Your KLW balance:', formattedBalance);
-
-        // Show balance in a toast or update UI
-        showBalanceNotification(formattedBalance);
-
-    } catch (error) {
-        console.error('Error connecting wallet:', error);
-        alert('Failed to connect wallet. Please try again.');
-    }
-}
-
-// Show balance notification
-function showBalanceNotification(balance) {
-    // Create a simple notification
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 24px;
-        background: var(--bg-card);
-        backdrop-filter: blur(20px);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 16px 20px;
-        box-shadow: var(--shadow-lg);
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-    `;
-    notification.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, var(--purple-primary), var(--gold-primary)); display: flex; align-items: center; justify-content: center;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-            </div>
-            <div>
-                <div style="font-weight: 600; margin-bottom: 4px;">Wallet Connected</div>
-                <div style="font-size: 13px; color: var(--text-secondary);">Balance: ${formatNumber(balance)} KLW</div>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(notification);
-
-    // Add animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Remove after 5 seconds
-    setTimeout(() => {
-        notification.style.animation = 'slideIn 0.3s ease reverse';
-        setTimeout(() => notification.remove(), 300);
-    }, 5000);
-}
-
 // Copy address to clipboard
 function copyAddress() {
     const address = document.getElementById('contractAddress').textContent;
@@ -513,7 +326,7 @@ function copyAddress() {
         const btn = event.target.closest('.copy-btn');
         const originalHTML = btn.innerHTML;
         btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-        btn.style.color = 'var(--green-primary)';
+        btn.style.color = '#10B981';
 
         setTimeout(() => {
             btn.innerHTML = originalHTML;
@@ -536,7 +349,6 @@ function truncateAddress(address) {
 
 function showError(message) {
     console.error(message);
-    // You can implement a toast notification here
 }
 
 // Initialize when DOM is ready

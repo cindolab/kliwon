@@ -24,7 +24,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo-section">
-                    <img src="logo.png" alt="KLW Logo" class="logo">
+                    <img src="logo.svg" alt="KLW Logo" class="logo">
                     <div class="logo-text">
                         <h1>Kliwon Token</h1>
                         <span class="ticker">KLW</span>
@@ -277,7 +277,7 @@
             <div class="footer-content">
                 <div class="footer-left">
                     <div class="footer-logo">
-                        <img src="logo.png" alt="KLW Logo">
+                        <img src="logo.svg" alt="KLW Logo">
                         <span>Kliwon Token</span>
                     </div>
                     <p class="footer-description">Dashboard untuk monitoring holder dan distribusi token KLW di Polygon
@@ -315,6 +315,40 @@
         </div>
     </footer>
 
+    <!-- Wallet Modal -->
+    <div class="wallet-modal" id="walletModal">
+        <div class="wallet-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Hubungkan Wallet</h3>
+                <button class="modal-close" onclick="window.walletProvider.closeWalletModal()">&times;</button>
+            </div>
+            <div class="wallet-options">
+                <div class="wallet-option" onclick="window.walletProvider.connectWallet('metamask')">
+                    <div class="wallet-icon">🦊</div>
+                    <div class="wallet-info">
+                        <h3>MetaMask</h3>
+                        <p>Connect using MetaMask wallet</p>
+                    </div>
+                </div>
+                <div class="wallet-option" onclick="window.walletProvider.connectWallet('trust')">
+                    <div class="wallet-icon">🛡️</div>
+                    <div class="wallet-info">
+                        <h3>Trust Wallet</h3>
+                        <p>Connect using Trust Wallet</p>
+                    </div>
+                </div>
+                <div class="wallet-option" onclick="window.walletProvider.connectWallet('walletconnect')">
+                    <div class="wallet-icon">🔗</div>
+                    <div class="wallet-info">
+                        <h3>WalletConnect</h3>
+                        <p>Coming soon</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="wallet-provider.js"></script>
     <script src="app.js"></script>
 </body>
 
