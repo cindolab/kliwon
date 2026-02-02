@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="CindoLab Logo">
+  <!-- Background Biru -->
+  <rect width="32" height="32" rx="3.75" fill="#0052FF"/>
+  <!-- Outer Rounded Diamond (Putih) -->
+  <g transform="translate(16,16) rotate(45) translate(-16,-16)">
+    <rect x="7.25" y="7.25" width="17.5" height="17.5" rx="3.75" fill="#FFFFFF"/>
+  </g>
+  <!-- Inner Rounded Diamond (Biru) -->
+  <g transform="translate(16,16) rotate(45) translate(-16,-16)">
+    <rect x="11.94" y="11.94" width="8.12" height="8.12" rx="2.19" fill="#0052FF"/>
+  </g>
+</svg>
