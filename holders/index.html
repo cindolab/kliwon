@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KLW Token Holders - Dashboard Pemegang Token Kliwon</title>
+    <meta name="description"
+        content="Dashboard untuk melihat holder dan statistik distribusi token Kliwon (KLW) di Polygon Network">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="logo.svg" alt="KLW Logo" class="logo">
+                    <div class="logo-text">
+                        <h1>Kliwon Token</h1>
+                        <span class="ticker">KLW</span>
+                    </div>
+                </div>
+                <nav class="nav">
+                    <a href="#overview" class="nav-link active">Overview</a>
+                    <a href="#holders" class="nav-link">Holders</a>
+                    <a href="#distribution" class="nav-link">Distribusi</a>
+                    <a href="#transactions" class="nav-link">Transaksi</a>
+                </nav>
+                <button class="connect-wallet-btn" id="connectWallet">
+                    <span class="btn-icon">🔗</span>
+                    <span class="btn-text">Hubungkan Wallet</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    <span>Live on Polygon Network</span>
+                </div>
+                <h2 class="hero-title">Dashboard Pemegang Token KLW</h2>
+                <p class="hero-description">Pantau distribusi token, holder terbesar, dan statistik real-time dari
+                    blockchain Polygon</p>
+
+                <div class="token-info-card">
+                    <div class="token-address">
+                        <span class="label">Contract Address:</span>
+                        <div class="address-container">
+                            <code id="contractAddress">0xd4a3F69399eA250AaA4Ee62Ec5271002E51EeCd8</code>
+                            <button class="copy-btn" onclick="copyAddress()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                            <a href="https://polygonscan.com/token/0xd4a3F69399eA250AaA4Ee62Ec5271002E51EeCd8"
+                                target="_blank" class="explorer-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Overview -->
+    <section class="stats-section" id="overview">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Total Supply</span>
+                        <h3 class="stat-value" id="totalSupply">
+                            <span class="loading-shimmer">Loading...</span>
+                        </h3>
+                        <span class="stat-change">KLW Tokens</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon gold">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Total Holders</span>
+                        <h3 class="stat-value" id="totalHolders">
+                            <span class="loading-shimmer">Loading...</span>
+                        </h3>
+                        <span class="stat-change positive">+12 minggu ini</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Transaksi 24h</span>
+                        <h3 class="stat-value" id="transactions24h">
+                            <span class="loading-shimmer">Loading...</span>
+                        </h3>
+                        <span class="stat-change positive">+8.5%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Market Cap</span>
+                        <h3 class="stat-value" id="marketCap">
+                            <span class="loading-shimmer">Loading...</span>
+                        </h3>
+                        <span class="stat-change">USD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Distribution Chart -->
+    <section class="distribution-section" id="distribution">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Distribusi Token</h2>
+                <p class="section-description">Visualisasi distribusi KLW token di antara holder</p>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-wrapper">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <span class="legend-color"
+                            style="background: linear-gradient(135deg, #9333EA 0%, #7C3AED 100%);"></span>
+                        <div class="legend-text">
+                            <span class="legend-label">Top 10 Holders</span>
+                            <span class="legend-value" id="top10Percentage">0%</span>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color"
+                            style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);"></span>
+                        <div class="legend-text">
+                            <span class="legend-label">Top 11-50 Holders</span>
+                            <span class="legend-value" id="top50Percentage">0%</span>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color"
+                            style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);"></span>
+                        <div class="legend-text">
+                            <span class="legend-label">Lainnya</span>
+                            <span class="legend-value" id="othersPercentage">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Holders Table -->
+    <section class="holders-section" id="holders">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Top Holders</h2>
+                <p class="section-description">Daftar pemegang token KLW terbesar</p>
+            </div>
+
+            <div class="table-container">
+                <table class="holders-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Address</th>
+                            <th>Balance</th>
+                            <th>Percentage</th>
+                            <th>Transaksi</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="holdersTableBody">
+                        <!-- Loading state -->
+                        <tr class="loading-row">
+                            <td colspan="6">
+                                <div class="loading-spinner"></div>
+                                <span>Memuat data dari blockchain...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <button class="pagination-btn" id="prevPage" disabled>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                    Previous
+                </button>
+                <div class="pagination-info">
+                    <span>Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+                </div>
+                <button class="pagination-btn" id="nextPage">
+                    Next
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Transactions -->
+    <section class="transactions-section" id="transactions">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Transaksi Terbaru</h2>
+                <p class="section-description">Transfer token KLW terkini</p>
+            </div>
+
+            <div class="transactions-list" id="transactionsList">
+                <!-- Loading state -->
+                <div class="loading-transactions">
+                    <div class="loading-spinner"></div>
+                    <span>Memuat transaksi terbaru...</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <div class="footer-logo">
+                        <img src="logo.svg" alt="KLW Logo">
+                        <span>Kliwon Token</span>
+                    </div>
+                    <p class="footer-description">Dashboard untuk monitoring holder dan distribusi token KLW di Polygon
+                        Network</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="https://polygonscan.com/token/0xd4a3F69399eA250AaA4Ee62Ec5271002E51EeCd8"
+                            target="_blank">PolygonScan</a>
+                        <a href="https://polygon.technology/" target="_blank">Polygon Network</a>
+                        <a href="#" target="_blank">Whitepaper</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Community</h4>
+                        <a href="#" target="_blank">Twitter</a>
+                        <a href="#" target="_blank">Telegram</a>
+                        <a href="#" target="_blank">Discord</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Developer</h4>
+                        <a href="https://github.com" target="_blank">GitHub</a>
+                        <a href="#" target="_blank">Documentation</a>
+                        <a href="#" target="_blank">API</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Kliwon Token. All rights reserved.</p>
+                <div class="footer-contract">
+                    <span>Contract:</span>
+                    <code>0xd4a3F69399eA250AaA4Ee62Ec5271002E51EeCd8</code>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Wallet Modal -->
+    <div class="wallet-modal" id="walletModal">
+        <div class="wallet-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Hubungkan Wallet</h3>
+                <button class="modal-close" onclick="window.walletProvider.closeWalletModal()">&times;</button>
+            </div>
+            <div class="wallet-options">
+                <div class="wallet-option" onclick="window.walletProvider.connectWallet('metamask')">
+                    <div class="wallet-icon">🦊</div>
+                    <div class="wallet-info">
+                        <h3>MetaMask</h3>
+                        <p>Connect using MetaMask wallet</p>
+                    </div>
+                </div>
+                <div class="wallet-option" onclick="window.walletProvider.connectWallet('trust')">
+                    <div class="wallet-icon">🛡️</div>
+                    <div class="wallet-info">
+                        <h3>Trust Wallet</h3>
+                        <p>Connect using Trust Wallet</p>
+                    </div>
+                </div>
+                <div class="wallet-option" onclick="window.walletProvider.connectWallet('walletconnect')">
+                    <div class="wallet-icon">🔗</div>
+                    <div class="wallet-info">
+                        <h3>WalletConnect</h3>
+                        <p>Coming soon</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="wallet-provider.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
