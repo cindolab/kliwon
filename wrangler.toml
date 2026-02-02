@@ -31,5 +31,5 @@ compatibility_date = "2024-04-05"
 # Let's go with this modern config.
 
 [assets]
-directory = "."
+directory = "./dist"
 binding = "ASSETS"
